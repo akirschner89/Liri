@@ -1,14 +1,14 @@
-//grab data for my twitter keys
 var twitterKeys = require("./keys.js");
-
-//for the rest
 var Twitter = require("twitter");
 var request = require("request");
 var Spotify = require('node-spotify-api');
+var fs = require("fs");
+var liriCommand = process.argv[2];
+
 
 
 // process for my-tweets command
-if (process.argv[2] === "my-tweets") {
+if (liriCommand === "my-tweets") {
 
     var client = new Twitter({
         consumer_key: 'GO9kYFh1BlOyrtICQcD39mPB4',
@@ -33,61 +33,102 @@ if (process.argv[2] === "my-tweets") {
 }
 
 // process for spotify-this-song command
-else if (process.argv[2] === "spotify-this-song") {
+else if (liriCommand === "spotify-this-song") {
 
-    var songSearch = process.argv.slice(3).join(" ");
+    var songSearch = (process.argv.slice(3).join(" ") || "The Sign");
 
     var spotify = new Spotify({
         id: 'a8888085f5e445c49da5f031c0717beb',
         secret: 'fbbf1ba183054d4d882c1cd5c1b8a213'
     });
 
-
-
-if (songSearch === false) {
-
-	spotify.search({ type: 'track', query: 'The Sign' }, function(err, data) {
-            if (err) {
-                return console.log('Error occurred: ' + err);
-            }
-
-            console.log("Artist Name: " + data.tracks.items[4].artists[0].name);
-            console.log("Track Name: " + data.tracks.items[4].name);
-            console.log("Preview URL: " + data.tracks.items[4].preview_url);
-            console.log("Album Name: " + data.tracks.items[4].album.name);
-        });
-    // spotify.search({ type: 'track', query: songSearch }, function(err, data) {
-    //     if (err) {
-    //         return console.log('Error occurred: ' + err);
-    //     }
-
-    //     console.log("Artist Name: " + data.tracks.items[0].artists[0].name);
-    //     console.log("Track Name: " + data.tracks.items[0].name);
-    //     console.log("Preview URL: " + data.tracks.items[0].preview_url);
-    //     console.log("Album Name: " + data.tracks.items[0].album.name);
-    // });
-
-}
-
-else {
-spotify.search({ type: 'track', query: songSearch }, function(err, data) {
+    spotify.search({ type: 'track', query: songSearch }, function(err, data) {
         if (err) {
             return console.log('Error occurred: ' + err);
-        }
+        } else if (songSearch != "The Sign") {
+            console.log("Artist Name: " + data.tracks.items[0].artists[0].name);
+            console.log("Track Name: " + data.tracks.items[0].name);
+            console.log("Preview URL: " + data.tracks.items[0].preview_url);
+            console.log("Album Name: " + data.tracks.items[0].album.name);
 
-        console.log("Artist Name: " + data.tracks.items[0].artists[0].name);
-        console.log("Track Name: " + data.tracks.items[0].name);
-        console.log("Preview URL: " + data.tracks.items[0].preview_url);
-        console.log("Album Name: " + data.tracks.items[0].album.name);
+           } else {
+                console.log("Artist Name: " + data.tracks.items[4].artists[0].name);
+                console.log("Track Name: " + data.tracks.items[4].name);
+                console.log("Preview URL: " + data.tracks.items[4].preview_url);
+                console.log("Album Name: " + data.tracks.items[4].album.name);
+            }
+        
     });
 
 
 }
 
+//how to slot this back in for the default 'the sign' spotify search
+// console.log("Artist Name: " + data.tracks.items[4].artists[0].name);
+// console.log("Track Name: " + data.tracks.items[4].name);
+// console.log("Preview URL: " + data.tracks.items[4].preview_url);
+// console.log("Album Name: " + data.tracks.items[4].album.name);
+
+// process for movie-this command
+else if (liriCommand === "movie-this") {
+
+
+    var movieName = (process.argv.slice(3).join("+") || "mr.nobody");
+
+    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&tomatoes=true&apikey=40e9cece";
+
+    request(queryUrl, function(error, response, body) {
+
+        if (!error && response.statusCode === 200) {
+            console.log("Title: " + JSON.parse(body).Title);
+            console.log("Release Year: " + JSON.parse(body).Year);
+            console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
+            console.log("Country/Countries where the movie was produced: " + JSON.parse(body).Country);
+            console.log("Language: " + JSON.parse(body).Language);
+            console.log("Plot: " + JSON.parse(body).Plot);
+            console.log("Actors: " + JSON.parse(body).Actors);
+            console.log("Rotten Tomatoes URL: " + JSON.parse(body).tomatoURL);
+        }
+    })
+
 
 }
 
-
-// process for movie-this command
-
 // process for do-what-it-says command
+else if (liriCommand === "do-what-it-says") {
+
+    fs.readFile("random.txt", "utf8", function(error, data) {
+
+        if (error) {
+            return console.log(error);
+        }
+
+        var dataArr = data.split(",");
+
+        if (dataArr[0] === "spotify-this-song") {
+            var spotify = new Spotify({
+                id: 'a8888085f5e445c49da5f031c0717beb',
+                secret: 'fbbf1ba183054d4d882c1cd5c1b8a213'
+            });
+
+            spotify.search({ type: 'track', query: dataArr[1] }, function(err, data) {
+                if (err) {
+                    return console.log('Error occurred: ' + err);
+                }
+
+                console.log("Artist Name: " + data.tracks.items[0].artists[0].name);
+                console.log("Track Name: " + data.tracks.items[0].name);
+                console.log("Preview URL: " + data.tracks.items[0].preview_url);
+                console.log("Album Name: " + data.tracks.items[0].album.name);
+            });
+        }
+
+    });
+
+
+}
+
+// todo list:
+// - log the bonus stuff in log.txt: In addition to logging the data to your terminal/bash window, output the data to a .txt file called log.txt.
+// Make sure you append each command you run to the log.txt file.
+// - finish the if/else statements for the do-what-it-says command
