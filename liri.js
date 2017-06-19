@@ -30,6 +30,16 @@ if (liriCommand === "my-tweets") {
         }
     });
 
+//log this command in the log.txt file
+fs.appendFile("log.txt", "my-tweets", function(err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log("You've logged a my-tweets command in the log.txt file!");
+        }
+    })
+
 }
 
 // process for spotify-this-song command
@@ -60,6 +70,15 @@ else if (liriCommand === "spotify-this-song") {
         
     });
 
+//log this command in the log.txt file
+fs.appendFile("log.txt", "spotify-this-song," + songSearch, function(err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log("You've logged a spotify-this-song command in the log.txt file!");
+        }
+    })
 
 }
 
@@ -91,6 +110,15 @@ else if (liriCommand === "movie-this") {
         }
     })
 
+//log this command in the log.txt file
+fs.appendFile("log.txt", "movie-this," + movieName, function(err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log("You've logged a movie-this command in the log.txt file!");
+        }
+    })
 
 }
 
@@ -125,10 +153,18 @@ else if (liriCommand === "do-what-it-says") {
 
     });
 
+ //log this command in the log.txt file
+fs.appendFile("log.txt", "do-what-it-says", function(err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log("You've logged a do-what-it-says command in the log.txt file!");
+        }
+    })
+
 
 }
 
 // todo list:
-// - log the bonus stuff in log.txt: In addition to logging the data to your terminal/bash window, output the data to a .txt file called log.txt.
-// Make sure you append each command you run to the log.txt file.
 // - finish the if/else statements for the do-what-it-says command
