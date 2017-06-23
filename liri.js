@@ -82,11 +82,6 @@ fs.appendFile("log.txt", "spotify-this-song," + songSearch, function(err) {
 
 }
 
-//how to slot this back in for the default 'the sign' spotify search
-// console.log("Artist Name: " + data.tracks.items[4].artists[0].name);
-// console.log("Track Name: " + data.tracks.items[4].name);
-// console.log("Preview URL: " + data.tracks.items[4].preview_url);
-// console.log("Album Name: " + data.tracks.items[4].album.name);
 
 // process for movie-this command
 else if (liriCommand === "movie-this") {
@@ -161,7 +156,7 @@ fs.appendFile("log.txt", "do-what-it-says", function(err) {
         else {
             console.log("You've logged a do-what-it-says command in the log.txt file!");
         }
-    })
+    });
 
 
 }
